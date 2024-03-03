@@ -23,6 +23,11 @@ def args():
 			nargs="?",
 			default=datetime.now().year,
 			help="year of reference for a stipend amounts table")
+    parser.add_argument(
+        "--ignore", "-i",
+        type=str,
+        help="do not adjust the amount if the country is listed in this file"
+    )
 
     args = parser.parse_args()
 
@@ -56,6 +61,13 @@ def main():
         print(f"'{input.country}' not in list. List of available countries:")
         print(*countries, sep="\n")
 
+        return
+
+    with open(input.ignore, 'r') as file:
+        ignored = file.read().splitlines()
+
+    if input.country in ignored:
+        print(input.amount)
         return
 
     ratio = compute_ratio(input.country, data)

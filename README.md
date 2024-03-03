@@ -18,12 +18,25 @@ $ python ppp.py 500 Brazil 2022
 333
 ```
 
+Add exceptions for countries listed in a file:
+
+```console
+$ python ppp.py 500 Luxembourg --ignore european-union.txt
+500
+```
+
 ## Purchasing power parity data
 
 The year has to correspond to a `<year>.csv` table whose contents can be fetched by using the helper script `update.py`. This script takes a URL to the GSoC contributor stipends page, or a snapshot of it from previous years (see e.g., the [Wayback Machine](https://web.archive.org/web) of the Internet Archive to get a snapshot). Its contents can then be stored in the working directory as follows:
 
 ```console
 $ python update.py https://web.archive.org/web/20220809160247/https://developers.google.com/open-source/gsoc/help/student-stipends >> 2022.csv
+```
+
+Update the list of member states of the European Union:
+
+```console
+$ python update_eu.py > european-union.txt
 ```
 
 ## Nix
