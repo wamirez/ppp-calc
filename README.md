@@ -26,15 +26,20 @@ $ python update.py https://web.archive.org/web/20220809160247/https://developers
 
 ## Nix
 
-A Nix derivation, `shell.nix`, has been added to ensure reproducibility across the board. For starters, install Nix following [these](https://nix.dev/tutorials/install-nix) instructions. Cd to the directory that contains the files from the ppp-calc repository and run the shell as follows:
+A Nix derivation, `shell.nix`, has been added to ensure reproducibility across the board.
 
-```console
-$ cd (...)/ppp-calc
-$ nix-shell
-```
+- [Install Nix](https://nix.dev/tutorials/install-nix)
+- Clone this repository
 
-`nix-shell`, picks up `shell.nix` automatically installing required packages and creating a custom Python environment. Lastly, make scripts executables by:
+  ```console
+  git clone https://github.com/wamirez/ppp-calc
+  ```
 
-```console
-$ chmod -x ppp.py update.py
-```
+- Enter the Nix shell
+
+  ```console
+  $ cd ppp-calc
+  $ nix-shell
+  ```
+
+`nix-shell` picks up `shell.nix` automatically installing required packages and creating a custom Python environment.
