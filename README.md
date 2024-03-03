@@ -1,24 +1,26 @@
-# Purchasing Power Parity calculator 
+# Purchasing power parity calculator 
 
-Adjust a given amount in USD for a given country after the [Purchasing Power Parity (PPP)](https://en.wikipedia.org/wiki/Purchasing_power_parity) indicator using the Netherlands as reference. Corresponding ratios are computed from the amounts provided by the [Google Summer of Code Stipend Amounts Table](https://developers.google.com/open-source/gsoc/help/student-stipends) (CC-BY-4.0).
+Adjust a given amount for a given country after the [purchasing power parity (PPP)](https://en.wikipedia.org/wiki/Purchasing_power_parity) indicator using the Netherlands as reference. Corresponding ratios are computed from the amounts provided by the [Google Summer of Code Stipend Amounts Table](https://developers.google.com/open-source/gsoc/help/student-stipends) (CC-BY-4.0), and rounded to an integer.
 
 ## Usage
 
-Specify amount [USD] and country in order to get the adjusted amount for the given country:
+Specify amount and country in order to get the adjusted amount for the given country:
 
 ```console
 $ python ppp.py 500 Brazil
 278
 ```
 
-The year can be specified when needed defaulting to the latest year otherwise:
+The year can be specified when needed, defaulting to the current year:
 
 ```console
 $ python ppp.py 500 Brazil 2022
 333
 ```
 
-The year has to correspond to a `<year>.csv` table whose contents can be fetched by using the helper script `update.py`. This script takes a URL to the Google SoC Contributor Stipends or a snapshot of it from previous years (see e.g., the [Wayback Machine](https://web.archive.org/web) of the Internet Archive to get a snapshot.) Its contents can then be stored in the working directory as follows:
+## Purchasing power parity data
+
+The year has to correspond to a `<year>.csv` table whose contents can be fetched by using the helper script `update.py`. This script takes a URL to the GSoC contributor stipends page, or a snapshot of it from previous years (see e.g., the [Wayback Machine](https://web.archive.org/web) of the Internet Archive to get a snapshot). Its contents can then be stored in the working directory as follows:
 
 ```console
 $ python update.py https://web.archive.org/web/20220809160247/https://developers.google.com/open-source/gsoc/help/student-stipends >> 2022.csv
@@ -26,15 +28,20 @@ $ python update.py https://web.archive.org/web/20220809160247/https://developers
 
 ## Nix
 
-A Nix derivation, `shell.nix`, has been added to ensure reproducibility across the board. For starters, install Nix following [these](https://nix.dev/tutorials/install-nix) instructions. Cd to the directory that contains the files from the ppp-calc repository and run the shell as follows:
+A Nix derivation, `shell.nix`, has been added to ensure reproducibility across the board.
 
-```console
-$ cd (...)/ppp-calc
-$ nix-shell
-```
+- [Install Nix](https://nix.dev/tutorials/install-nix)
+- Clone this repository
 
-`nix-shell`, picks up `shell.nix` automatically installing required packages and creating a custom Python environment. Lastly, make scripts executables by:
+  ```console
+  git clone https://github.com/wamirez/ppp-calc
+  ```
 
-```console
-$ chmod -x ppp.py update.py
-```
+- Enter the Nix shell
+
+  ```console
+  $ cd ppp-calc
+  $ nix-shell
+  ```
+
+`nix-shell` picks up `shell.nix` automatically installing required packages and creating a custom Python environment.
