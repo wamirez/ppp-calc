@@ -14,7 +14,7 @@ def args():
 
     parser.add_argument("amount",
                         type=int,
-                        help="USD amount to adjust to Purchasing Power Parity")
+                        help="amount to adjust to Purchasing Power Parity")
     parser.add_argument("country",
                         type=str,
                         help="country to use for adjustment")
@@ -50,14 +50,14 @@ def main():
     with open(file, "r") as table:
         my_csv = csv.reader(table)
         data = [row for row in my_csv]
-    
+
     if not any(input.country == row[0] for row in data):
         countries = [row[0] for row in data[1:]]
         print(f"'{input.country}' not in list. List of available countries:")
         print(*countries, sep="\n")
 
         return
-    
+
     ratio = compute_ratio(input.country, data)
     output = ratio * input.amount
     print(round(output))
