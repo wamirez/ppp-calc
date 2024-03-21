@@ -63,12 +63,13 @@ def main():
 
         return
 
-    with open(input.ignore, 'r') as file:
-        ignored = file.read().splitlines()
+    if input.ignore:
+        with open(input.ignore, 'r') as file:
+            ignored = file.read().splitlines()
 
-    if input.country in ignored:
-        print(input.amount)
-        return
+        if input.country in ignored:
+            print(input.amount)
+            return
 
     ratio = compute_ratio(input.country, data)
     output = ratio * input.amount
