@@ -11,6 +11,13 @@ $ python ppp.py 500 Brazil
 278
 ```
 
+Set a different reference country with `--reference`:
+
+```console
+$ python ppp.py 500 Brazil --reference Australia
+227
+```
+
 The year can be specified when needed, defaulting to the current year:
 
 ```console
