@@ -12,17 +12,30 @@ from datetime import datetime
 def args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("amount",
-                        type=int,
-                        help="amount to adjust to Purchasing Power Parity")
-    parser.add_argument("country",
-                        type=str,
-                        help="country to use for adjustment")
-    parser.add_argument("year",
-			type=str,
-			nargs="?",
-			default=datetime.now().year,
-			help="year of reference for a stipend amounts table")
+    parser.add_argument(
+        "amount",
+        type=int,
+        help="amount to adjust to Purchasing Power Parity",
+    )
+    parser.add_argument(
+        "country",
+        type=str,
+        help="country to use for adjustment",
+    )
+    parser.add_argument(
+        "year",
+        type=str,
+        nargs="?",
+        default=datetime.now().year,
+        help="year of reference for a stipend amounts table",
+    )
+    parser.add_argument(
+        "--reference", "-r",
+        type=str,
+        nargs="?",
+        help="country to use as reference",
+        default="Netherlands",
+    )
     parser.add_argument(
         "--ignore", "-i",
         type=str,
@@ -34,12 +47,11 @@ def args():
     return args
 
 
-def compute_ratio(country, data):
+def compute_ratio(reference, country, data):
     """
     compute PPP ratio against a default source for given country
     """
-    default_source = "Netherlands"
-    source_amount = int(next(x[1] for x in data if x[0] == default_source))
+    source_amount = int(next(x[1] for x in data if x[0] == reference))
     target_amount = int(next(x[1] for x in data if x[0] == country))
 
     return target_amount/source_amount
@@ -56,8 +68,8 @@ def main():
         my_csv = csv.reader(table)
         data = [row for row in my_csv]
 
-    if not any(input.country == row[0] for row in data):
-        countries = [row[0] for row in data[1:]]
+    countries = [row[0] for row in data[1:]]
+    if (not input.country in countries) or (not input.reference in countries):
         print(f"'{input.country}' not in list. List of available countries:")
         print(*countries, sep="\n")
 
@@ -71,7 +83,8 @@ def main():
             print(input.amount)
             return
 
-    ratio = compute_ratio(input.country, data)
+    ratio = compute_ratio(input.reference, input.country, data)
+
     output = ratio * input.amount
     print(round(output))
 
