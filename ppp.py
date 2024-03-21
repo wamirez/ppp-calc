@@ -36,6 +36,11 @@ def args():
         help="country to use as reference",
         default="Netherlands",
     )
+    parser.add_argument(
+        "--ignore", "-i",
+        type=str,
+        help="do not adjust the amount if the country is listed in this file"
+    )
 
     args = parser.parse_args()
 
@@ -70,7 +75,16 @@ def main():
 
         return
 
+    if input.ignore:
+        with open(input.ignore, 'r') as file:
+            ignored = file.read().splitlines()
+
+        if input.country in ignored:
+            print(input.amount)
+            return
+
     ratio = compute_ratio(input.reference, input.country, data)
+
     output = ratio * input.amount
     print(round(output))
 
