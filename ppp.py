@@ -7,6 +7,7 @@ import errno
 import sys
 sys.tracebacklimit=0
 from datetime import datetime
+from tabulate import tabulate
 
 
 def args():
@@ -20,6 +21,7 @@ def args():
     parser.add_argument(
         "country",
         type=str,
+        nargs="?",
         help="country to use for adjustment",
     )
     parser.add_argument(
@@ -40,6 +42,10 @@ def args():
         "--ignore", "-i",
         type=str,
         help="do not adjust the amount if the country is listed in this file"
+    )
+    parser.add_argument(
+        "--all", "-a",
+        action="store_true",
     )
 
     args = parser.parse_args()
@@ -68,13 +74,6 @@ def main():
         my_csv = csv.reader(table)
         data = [row for row in my_csv]
 
-    countries = [row[0] for row in data[1:]]
-    if (not input.country in countries) or (not input.reference in countries):
-        print(f"'{input.country}' not in list. List of available countries:")
-        print(*countries, sep="\n")
-
-        return
-
     if input.ignore:
         with open(input.ignore, 'r') as file:
             ignored = file.read().splitlines()
@@ -82,6 +81,33 @@ def main():
         if input.country in ignored:
             print(input.amount)
             return
+
+    if input.all:
+        eu_countries = set()
+        eu_file = os.path.join(base, "european-union.txt")
+        if os.path.isfile(eu_file):
+            with open(eu_file, 'r') as f:
+                eu_countries = set(line.strip() for line in f if line.strip())
+
+        def calculate_amounts(country, ratio):
+            if country in eu_countries:
+                return round(input.amount), round(5/3 * input.amount)
+            return round(input.amount * ratio), round(5/3 * input.amount * ratio)
+
+        rows = [
+            [row[0], *calculate_amounts(row[0], compute_ratio(input.reference, row[0], data))]
+            for row in data[1:]
+        ]
+    
+        print(tabulate(rows, headers=["Country", "Participant [EUR]", "Mentor [EUR]"], tablefmt="github"))
+        return
+
+    countries = [row[0] for row in data[1:]]
+    if (not input.country in countries) or (not input.reference in countries):
+        print(f"'{input.country}' not in list. List of available countries:")
+        print(*countries, sep="\n")
+
+        return
 
     ratio = compute_ratio(input.reference, input.country, data)
 
@@ -91,4 +117,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
